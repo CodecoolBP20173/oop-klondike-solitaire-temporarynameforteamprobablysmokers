@@ -42,6 +42,7 @@ public class Game extends Pane {
         refillStockFromDiscard();
     };
 
+
     private EventHandler<MouseEvent> onMousePressedHandler = e -> {
         dragStartX = e.getSceneX();
         dragStartY = e.getSceneY();
@@ -110,13 +111,28 @@ public class Game extends Pane {
         return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
     }
 
+
     private void restartButton(){
         Button restart = new Button("Restart");
         restart.setLayoutY(600);
         restart.setLayoutX(600);
         getChildren().add(restart);
+        restart.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Card.createNewDeck();
+                initPiles();
+                dealCards();
+                restartButton();
+            }
+        });
 
     }
+
+
+
+
+
 
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
         Pile result = null;
