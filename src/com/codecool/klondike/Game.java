@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -12,11 +13,8 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
-import java.util.Arrays;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Game extends Pane {
 
@@ -34,9 +32,14 @@ public class Game extends Pane {
     private static double FOUNDATION_GAP = 0;
     private static double TABLEAU_GAP = 30;
 
+    private Pile source;
+    private Card currentCard;
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
+        //System.out.println(e.getSource());
+        source=((Card) e.getSource()).getContainingPile();
+
         if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
             card.moveToPile(discardPile);
             card.flip();
@@ -78,6 +81,7 @@ public class Game extends Pane {
         if (draggedCards.isEmpty())
             return;
         Card card = (Card) e.getSource();
+        currentCard=card;
         Pile pile = getValidIntersectingPile(card, tableauPiles);
         Pile fromPile = card.getContainingPile();
         //TODO Complete
@@ -97,10 +101,13 @@ public class Game extends Pane {
     }
 
     public Game() {
+
         deck = Card.createNewDeck();
         initPiles();
         dealCards();
+        initButtons();
     }
+
 
     public void addMouseEventHandlers(Card card) {
         card.setOnMousePressed(onMousePressedHandler);
@@ -149,15 +156,54 @@ public class Game extends Pane {
             if (destPile.getPileType().equals(Pile.PileType.FOUNDATION))
                 msg = String.format("Placed %s to the foundation.", card);
             if (destPile.getPileType().equals(Pile.PileType.TABLEAU))
-                msg = String.format("Placed %s to a new pile.", card);
+                msg = String.format("Placed %s to %s.", card, destPile);
         } else {
-            msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
+            msg = String.format("Placed %s to %s from %s", card, destPile.getTopCard(), source);
         }
         System.out.println(msg);
         MouseUtil.slideToDest(draggedCards, destPile);
         draggedCards.clear();
     }
+    public void undo () {
 
+        currentCard.moveToPile(source);
+    }
+
+
+
+    private void initButtons() {
+        Button undo = new Button("Undo Move");
+        Button restart = new Button("Restart");
+        undo.setLayoutY(600);
+        undo.setLayoutX(600);
+        undo.setOnAction(e -> {
+            undo();
+        });
+
+        getChildren().add(undo);
+        restart.setLayoutY(700);
+        restart.setLayoutX(600);
+        restart.setOnAction(e -> {
+
+            reset();
+            deck = Card.createNewDeck();
+            initPiles();
+            dealCards();
+
+        });
+
+        getChildren().add(restart);
+
+    }
+
+    public void reset() {
+        for (Pile pile: tableauPiles) {
+
+            getChildren().removeAll(pile.getCards());
+            pile.clear();
+        }
+        getChildren().removeAll(stockPile.getCards());
+    }
 
     private void initPiles() {
         stockPile = new Pile(Pile.PileType.STOCK, "Stock", STOCK_GAP);
