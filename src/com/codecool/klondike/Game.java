@@ -35,9 +35,14 @@ public class Game extends Pane {
     private static double FOUNDATION_GAP = 0;
     private static double TABLEAU_GAP = 30;
 
+    private Pile source;
+    private Card currentCard;
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
+        //System.out.println(e.getSource());
+        source=((Card) e.getSource()).getContainingPile();
+
         if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
             card.moveToPile(discardPile);
             card.flip();
@@ -79,6 +84,7 @@ public class Game extends Pane {
         if (draggedCards.isEmpty())
             return;
         Card card = (Card) e.getSource();
+        currentCard=card;
         Pile pile = getValidIntersectingPile(card, tableauPiles);
         //TODO
         if (pile != null) {
@@ -100,6 +106,7 @@ public class Game extends Pane {
         dealCards();
         initButtons();
     }
+
 
     public void addMouseEventHandlers(Card card) {
         card.setOnMousePressed(onMousePressedHandler);
@@ -125,6 +132,7 @@ public class Game extends Pane {
                     isMoveValid(card, pile))
                 result = pile;
         }
+        System.out.println("alma");
         return result;
     }
 
@@ -143,19 +151,27 @@ public class Game extends Pane {
             if (destPile.getPileType().equals(Pile.PileType.TABLEAU))
                 msg = String.format("Placed %s to %s.", card, destPile);
         } else {
-            msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
+            msg = String.format("Placed %s to %s from %s", card, destPile.getTopCard(), source);
         }
         System.out.println(msg);
         MouseUtil.slideToDest(draggedCards, destPile);
         draggedCards.clear();
     }
+    public void undo () {
+
+        currentCard.moveToPile(source);
+    }
+
 
 
     private void initButtons() {
         Button undo = new Button("Undo Move");
         undo.setLayoutY(600);
         undo.setLayoutX(600);
-        //undo.setOnMouseClicked();
+        undo.setOnAction(e -> {
+            undo();
+        });
+        
         getChildren().add(undo);
 
     }
