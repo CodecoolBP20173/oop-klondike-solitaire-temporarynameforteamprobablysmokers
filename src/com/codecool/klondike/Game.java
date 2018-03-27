@@ -13,11 +13,8 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
-import java.util.Arrays;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Game extends Pane {
 
@@ -101,6 +98,7 @@ public class Game extends Pane {
     }
 
     public Game() {
+
         deck = Card.createNewDeck();
         initPiles();
         dealCards();
@@ -132,7 +130,6 @@ public class Game extends Pane {
                     isMoveValid(card, pile))
                 result = pile;
         }
-        System.out.println("alma");
         return result;
     }
 
@@ -166,14 +163,36 @@ public class Game extends Pane {
 
     private void initButtons() {
         Button undo = new Button("Undo Move");
+        Button restart = new Button("Restart");
         undo.setLayoutY(600);
         undo.setLayoutX(600);
         undo.setOnAction(e -> {
             undo();
         });
-        
-        getChildren().add(undo);
 
+        getChildren().add(undo);
+        restart.setLayoutY(700);
+        restart.setLayoutX(600);
+        restart.setOnAction(e -> {
+
+            reset();
+            deck = Card.createNewDeck();
+            initPiles();
+            dealCards();
+
+        });
+
+        getChildren().add(restart);
+
+    }
+
+    public void reset() {
+        for (Pile pile: tableauPiles) {
+
+            getChildren().removeAll(pile.getCards());
+            pile.clear();
+        }
+        getChildren().removeAll(stockPile.getCards());
     }
 
     private void initPiles() {
