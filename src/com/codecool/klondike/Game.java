@@ -12,6 +12,7 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
+import java.util.Arrays;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -182,6 +183,7 @@ public class Game extends Pane {
 
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
+        //TODO
         int i = 0;
         while (i < 7) {
             for (int j=-1; j < i; j++) {
