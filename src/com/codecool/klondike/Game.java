@@ -83,8 +83,10 @@ public class Game extends Pane {
             return;
 
         Card card = (Card) e.getSource();
-
-        Pile pile = getValidIntersectingPile(card, tableauPiles);
+        List<Pile> union = new ArrayList<>();
+        union.addAll( tableauPiles );
+        union.addAll( foundationPiles );
+        Pile pile = getValidIntersectingPile(card, union);
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
@@ -94,7 +96,7 @@ public class Game extends Pane {
             Steps.getPileStepIt().add(source);
             Steps.getPileStepIt().previous();
             handleValidMove(card, pile);
-            if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty())) {
+            if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
                 fromPile.getTopCard().flip();
             }
         } else {
@@ -140,8 +142,15 @@ public class Game extends Pane {
         //TODO Complete
         if (destPile.getPileType() == Pile.PileType.TABLEAU && !(destPile.isEmpty())) {
             return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
+        } else if (destPile.getPileType() == Pile.PileType.TABLEAU && destPile.isEmpty()) {
+            return card.getRank() == 13;
+        } else if (destPile.getPileType() == Pile.PileType.FOUNDATION && destPile.isEmpty()) {
+            return card.getRank() == 1;
+        } else if (destPile.getPileType() == Pile.PileType.FOUNDATION && (!destPile.isEmpty())) {
+            return (card.getRank() == destPile.getTopCard().getRank() + 1) && (card.getSuit() == destPile.getTopCard().getSuit());
+        } else {
+            return false;
         }
-        return false;
     }
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
         Pile result = null;
