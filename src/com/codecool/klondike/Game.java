@@ -1,18 +1,11 @@
 package com.codecool.klondike;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.Pane;
-import java.util.Arrays;
+import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -97,6 +90,7 @@ public class Game extends Pane {
         deck = Card.createNewDeck();
         initPiles();
         dealCards();
+        restartButton();
     }
 
     public void addMouseEventHandlers(Card card) {
@@ -115,6 +109,15 @@ public class Game extends Pane {
         //TODO
         return true;
     }
+
+    private void restartButton(){
+        Button restart = new Button("Restart");
+        restart.setLayoutY(600);
+        restart.setLayoutX(600);
+        getChildren().add(restart);
+
+    }
+
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
         Pile result = null;
         for (Pile pile : piles) {
