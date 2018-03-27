@@ -39,7 +39,6 @@ public class Game extends Pane {
         Card card = (Card) e.getSource();
         //System.out.println(e.getSource());
         source=((Card) e.getSource()).getContainingPile();
-
         if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
             card.moveToPile(discardPile);
             card.flip();
@@ -88,10 +87,12 @@ public class Game extends Pane {
         if (pile != null) {
             card.moveToPile(pile);
             handleValidMove(card, pile);
-            fromPile.getTopCard().flip();
+            if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty())) {
+                fromPile.getTopCard().flip();
+            }
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
-            draggedCards = null;
+            draggedCards.clear();
         }
     };
 
@@ -130,7 +131,10 @@ public class Game extends Pane {
 
     public boolean isMoveValid(Card card, Pile destPile) {
         //TODO Complete
-        return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
+        if (destPile.getPileType() == Pile.PileType.TABLEAU && !(destPile.isEmpty())) {
+            return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
+        }
+        return false;
     }
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
         Pile result = null;
