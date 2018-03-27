@@ -80,7 +80,7 @@ public class Game extends Pane {
         Card card = (Card) e.getSource();
         Pile pile = getValidIntersectingPile(card, tableauPiles);
         Pile fromPile = card.getContainingPile();
-        //TODO
+        //TODO Complete
         if (pile != null) {
             card.moveToPile(pile);
             handleValidMove(card, pile);
@@ -111,11 +111,18 @@ public class Game extends Pane {
 
     public void refillStockFromDiscard() {
         //TODO
+        int discardPileLength = discardPile.numOfCards();
+        if (stockPile.isEmpty()) {
+            for (int i = 0; i < discardPileLength; i++) {
+                discardPile.getTopCard().flip();
+                discardPile.getTopCard().moveToPile(stockPile);
+            }
+        }
         System.out.println("Stock refilled from discard pile.");
     }
 
     public boolean isMoveValid(Card card, Pile destPile) {
-        //TODO
+        //TODO Complete
         return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
     }
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
@@ -186,7 +193,7 @@ public class Game extends Pane {
 
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
-        //TODO
+        //TODO Complete
         int i = 0;
         while (i < 7) {
             for (int j=-1; j < i; j++) {
