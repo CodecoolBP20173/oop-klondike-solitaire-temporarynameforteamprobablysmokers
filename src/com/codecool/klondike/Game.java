@@ -37,8 +37,10 @@ public class Game extends Pane {
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
-        //System.out.println(e.getSource());
-        source=((Card) e.getSource()).getContainingPile();
+
+
+
+
 
         if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
             card.moveToPile(discardPile);
@@ -59,6 +61,9 @@ public class Game extends Pane {
 
     private EventHandler<MouseEvent> onMouseDraggedHandler = e -> {
         Card card = (Card) e.getSource();
+        source = card.getContainingPile();
+        currentCard= card;
+
         Pile activePile = card.getContainingPile();
         if (activePile.getPileType() == Pile.PileType.STOCK)
             return;
@@ -80,13 +85,18 @@ public class Game extends Pane {
     private EventHandler<MouseEvent> onMouseReleasedHandler = e -> {
         if (draggedCards.isEmpty())
             return;
+
         Card card = (Card) e.getSource();
-        currentCard=card;
+
         Pile pile = getValidIntersectingPile(card, tableauPiles);
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
             card.moveToPile(pile);
+            Steps.getCardStepIt().add(currentCard);
+            Steps.getCardStepIt().previous();
+            Steps.getPileStepIt().add(source);
+            Steps.getPileStepIt().previous();
             handleValidMove(card, pile);
             fromPile.getTopCard().flip();
         } else {
@@ -164,10 +174,7 @@ public class Game extends Pane {
         MouseUtil.slideToDest(draggedCards, destPile);
         draggedCards.clear();
     }
-    public void undo () {
 
-        currentCard.moveToPile(source);
-    }
 
 
 
@@ -177,7 +184,7 @@ public class Game extends Pane {
         undo.setLayoutY(600);
         undo.setLayoutX(600);
         undo.setOnAction(e -> {
-            undo();
+            Steps.undo();
         });
 
         getChildren().add(undo);
@@ -186,7 +193,8 @@ public class Game extends Pane {
         restart.setOnAction(e -> {
 
             reset();
-            deck = Card.createNewDeck();
+
+            deck=Card.createNewDeck();
             initPiles();
             dealCards();
 
@@ -201,8 +209,25 @@ public class Game extends Pane {
 
             getChildren().removeAll(pile.getCards());
             pile.clear();
+            getChildren().remove(pile);
+
         }
+        tableauPiles.clear();
+        for (Pile pile: foundationPiles) {
+            getChildren().removeAll(pile.getCards());
+            pile.clear();
+            getChildren().remove(pile);
+
+        }
+        foundationPiles.clear();
         getChildren().removeAll(stockPile.getCards());
+        getChildren().remove(stockPile);
+        stockPile.clear();
+        getChildren().removeAll(discardPile.getCards());
+        getChildren().remove(discardPile);
+        discardPile.clear();
+        deck.clear();
+
     }
 
     private void initPiles() {
