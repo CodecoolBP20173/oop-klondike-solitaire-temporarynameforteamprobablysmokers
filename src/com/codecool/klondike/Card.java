@@ -5,9 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
-
-import java.util.List;
-
 import java.util.*;
 
 public class Card extends ImageView {
@@ -81,14 +78,8 @@ public class Card extends ImageView {
     }
 
     public static boolean isOppositeColor(Card card1, Card card2) {
-        ArrayList<Integer> red = new ArrayList<>(2);
-        ArrayList<Integer> black = new ArrayList<>(2);
-        red.add(1);
-        red.add(2);
-        black.add(3);
-        black.add(4);
-        return red.contains(card1.getSuit()) && black.contains(card2.getSuit()) || black.contains(card1.getSuit())
-                && red.contains(card2.getSuit());
+        //TODO
+        return true;
     }
 
     public static boolean isSameSuit(Card card1, Card card2) {
@@ -102,8 +93,6 @@ public class Card extends ImageView {
                 result.add(new Card(suit, rank, true));
             }
         }
-        System.out.println();
-        Collections.shuffle(result);
         return result;
     }
 

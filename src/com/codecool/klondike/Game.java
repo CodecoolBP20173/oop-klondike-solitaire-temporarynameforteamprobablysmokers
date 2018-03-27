@@ -12,7 +12,6 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
-import java.util.Arrays;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -113,7 +112,7 @@ public class Game extends Pane {
 
     public boolean isMoveValid(Card card, Pile destPile) {
         //TODO
-        return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
+        return true;
     }
     private Pile getValidIntersectingPile(Card card, List<Pile> piles) {
         Pile result = null;
@@ -184,19 +183,6 @@ public class Game extends Pane {
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
         //TODO
-        int i = 0;
-        while (i < 7) {
-            for (int j=-1; j < i; j++) {
-                Card card = deckIterator.next();
-                tableauPiles.get(i).addCard(card);
-                addMouseEventHandlers(card);
-                getChildren().add(card);
-                if (j == i - 1) {
-                    card.flip();
-                }
-            }
-            i++;
-        }
         deckIterator.forEachRemaining(card -> {
             stockPile.addCard(card);
             addMouseEventHandlers(card);
