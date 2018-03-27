@@ -107,7 +107,7 @@ public class Game extends Pane {
 
     public boolean isMoveValid(Card card, Pile destPile) {
         //TODO
-        return true;
+        return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
     }
 
     private void restartButton(){
@@ -194,6 +194,9 @@ public class Game extends Pane {
                 tableauPiles.get(i).addCard(card);
                 addMouseEventHandlers(card);
                 getChildren().add(card);
+                if (j == i - 1) {
+                    card.flip();
+                }
             }
             i++;
         }
