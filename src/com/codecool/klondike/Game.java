@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -96,6 +97,7 @@ public class Game extends Pane {
         deck = Card.createNewDeck();
         initPiles();
         dealCards();
+        initButtons();
     }
 
     public void addMouseEventHandlers(Card card) {
@@ -138,7 +140,7 @@ public class Game extends Pane {
             if (destPile.getPileType().equals(Pile.PileType.FOUNDATION))
                 msg = String.format("Placed %s to the foundation.", card);
             if (destPile.getPileType().equals(Pile.PileType.TABLEAU))
-                msg = String.format("Placed %s to a new pile.", card);
+                msg = String.format("Placed %s to %s.", card, destPile);
         } else {
             msg = String.format("Placed %s to %s.", card, destPile.getTopCard());
         }
@@ -147,6 +149,15 @@ public class Game extends Pane {
         draggedCards.clear();
     }
 
+
+    private void initButtons() {
+        Button undo = new Button("Undo Move");
+        undo.setLayoutY(600);
+        undo.setLayoutX(600);
+        //undo.setOnMouseClicked();
+        getChildren().add(undo);
+
+    }
 
     private void initPiles() {
         stockPile = new Pile(Pile.PileType.STOCK, "Stock", STOCK_GAP);
