@@ -5,6 +5,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
+
+import java.util.List;
+
 import java.util.*;
 
 public class Card extends ImageView {
@@ -93,6 +96,8 @@ public class Card extends ImageView {
                 result.add(new Card(suit, rank, true));
             }
         }
+        System.out.println();
+        Collections.shuffle(result);
         return result;
     }
 
