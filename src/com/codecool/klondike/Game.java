@@ -191,6 +191,9 @@ public class Game extends Pane {
                 tableauPiles.get(i).addCard(card);
                 addMouseEventHandlers(card);
                 getChildren().add(card);
+                if (j == i - 1) {
+                    card.flip();
+                }
             }
             i++;
         }
