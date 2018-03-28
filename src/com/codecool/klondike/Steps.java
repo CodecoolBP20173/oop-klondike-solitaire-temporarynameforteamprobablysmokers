@@ -9,7 +9,7 @@ public interface Steps {
     ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
     ListIterator<Pile> pileStepIt = new LinkedList<Pile>().listIterator();
 
-
+    
     public static ListIterator<Card> getCardStepIt() {
         return cardStepIt;
     }
