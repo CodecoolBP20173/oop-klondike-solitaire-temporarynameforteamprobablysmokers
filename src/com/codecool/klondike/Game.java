@@ -135,9 +135,6 @@ public class Game extends Pane {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("You Won!");
         alert.setContentText("Exit or Restart?");
-
-        alert.showAndWait();
-
         ButtonType exit = new ButtonType("Exit");
         ButtonType restart = new ButtonType("Restart");
 
