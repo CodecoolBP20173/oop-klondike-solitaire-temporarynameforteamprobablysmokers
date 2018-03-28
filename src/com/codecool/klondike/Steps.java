@@ -4,7 +4,6 @@ import java.util.*;
 
 public interface Steps {
 
-    //ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
     ListIterator<Pile> pileStepIt = new LinkedList<Pile>().listIterator();
     ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
     ListIterator<Integer> numOfSteps = new LinkedList<Integer>().listIterator();
@@ -19,22 +18,18 @@ public interface Steps {
 
     public static void undo () {
 
-        if (cardStepIt.hasNext()) {
+        if (cardStepIt.hasNext() && cardStepIt.next() != null) {
             if (pileStepIt.next().getTopCard()!=null) {
                 pileStepIt.previous();
-                pileStepIt.next().getTopCard().flip();
+                if (pileStepIt.next().getPileType() != Pile.PileType.DISCARD) {
+                    pileStepIt.next().getTopCard().flip();
+                }
             }
             pileStepIt.previous();
-            //System.out.println("alma");
-            //System.out.println(numOfSteps.next());
             Integer next = numOfSteps.next();
             Pile sourceP = pileStepIt.next();
             for (Integer i = 0; i<next; i++)
                 cardStepIt.next().moveToPile(sourceP);
-                //pileStepIt.previous();
         }
-
     }
-
-
 }
