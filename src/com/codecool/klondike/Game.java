@@ -60,6 +60,7 @@ public class Game extends Pane {
             return;
 
         double offsetX = e.getSceneX() - dragStartX;
+        System.out.println(offsetX);
         double offsetY = e.getSceneY() - dragStartY;
         draggedCards.clear();
         int offSetCounter = 1;
@@ -91,17 +92,11 @@ public class Game extends Pane {
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
-            for (Card draggedCard: draggedCards) {
-                draggedCard.moveToPile(pile);
-            }
             Steps.getCardStepIt().add(currentCard);
             Steps.getCardStepIt().previous();
             Steps.getPileStepIt().add(source);
             Steps.getPileStepIt().previous();
             handleValidMove(card, pile);
-            if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
-                fromPile.getTopCard().flip();
-            }
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
             draggedCards.clear();
