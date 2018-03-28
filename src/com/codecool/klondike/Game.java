@@ -58,19 +58,25 @@ public class Game extends Pane {
         Pile activePile = card.getContainingPile();
         if (activePile.getPileType() == Pile.PileType.STOCK)
             return;
+
         double offsetX = e.getSceneX() - dragStartX;
         double offsetY = e.getSceneY() - dragStartY;
-
         draggedCards.clear();
-        draggedCards.add(card);
+        int offSetCounter = 1;
+        for (Card pileCard: source.getCards()) {
+            if (source.getCards().indexOf(pileCard) >= source.getCards().indexOf(currentCard)) {
+                draggedCards.add(pileCard);
 
-        card.getDropShadow().setRadius(20);
-        card.getDropShadow().setOffsetX(10);
-        card.getDropShadow().setOffsetY(10);
+                pileCard.toFront();
+                pileCard.getDropShadow().setRadius(20);
+                pileCard.getDropShadow().setOffsetX(10);
+                pileCard.getDropShadow().setOffsetY(10);
 
-        card.toFront();
-        card.setTranslateX(offsetX);
-        card.setTranslateY(offsetY);
+                pileCard.setTranslateX(offsetX);
+                pileCard.setTranslateY(offsetY);
+                offSetCounter++;
+            }
+        }
     };
 
     private EventHandler<MouseEvent> onMouseReleasedHandler = e -> {
@@ -85,7 +91,9 @@ public class Game extends Pane {
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
-            card.moveToPile(pile);
+            for (Card draggedCard: draggedCards) {
+                draggedCard.moveToPile(pile);
+            }
             Steps.getCardStepIt().add(currentCard);
             Steps.getCardStepIt().previous();
             Steps.getPileStepIt().add(source);
