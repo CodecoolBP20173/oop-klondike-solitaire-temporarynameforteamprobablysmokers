@@ -3,15 +3,18 @@ package com.codecool.klondike;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class Game extends Pane {
 
@@ -176,7 +179,8 @@ public class Game extends Pane {
 
     public void gameWon() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("You Won!");
+        alert.setTitle("Game Complete");
+        alert.setHeaderText("You Won!");
         alert.setContentText("Exit or Restart?");
         ButtonType exit = new ButtonType("Exit");
         ButtonType restart = new ButtonType("Restart");
@@ -189,6 +193,9 @@ public class Game extends Pane {
             System.exit(0);
         }  else {
             reset();
+            deck=Card.createNewDeck();
+            initPiles();
+            dealCards();
         }
 
 
@@ -273,25 +280,28 @@ public class Game extends Pane {
 
 
     private void initButtons() {
-        Button undo = new Button("Undo Move");
+        Font myFont = new Font("Serif",  36);
+        Button undo = new Button("\u21ba");
+        undo.setFont(myFont);
         Button restart = new Button("Restart");
-        undo.setLayoutY(600);
-        undo.setLayoutX(600);
+        undo.setLayoutY(130);
+        undo.setLayoutX(475);
+        undo.setMaxSize(100,80);
+        undo.setMinSize(100,80);
         undo.setOnAction(e -> {
             Steps.undo();
         });
-
         getChildren().add(undo);
-        restart.setLayoutY(700);
-        restart.setLayoutX(600);
+
+        restart.setLayoutY(40);
+        restart.setLayoutX(475);
+        restart.setMaxSize(100,80);
+        restart.setMinSize(100,80);
         restart.setOnAction(e -> {
-
             reset();
-
             deck=Card.createNewDeck();
             initPiles();
             dealCards();
-
         });
 
         getChildren().add(restart);
@@ -304,6 +314,7 @@ public class Game extends Pane {
             getChildren().removeAll(pile.getCards());
             pile.clear();
             getChildren().remove(pile);
+
 
         }
         tableauPiles.clear();
