@@ -4,10 +4,10 @@ import org.omg.CORBA.Object;
 
 import java.util.*;
 
-public class Steps {
+public interface Steps {
 
-    private static ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
-    private static ListIterator<Pile> pileStepIt = new LinkedList<Pile>().listIterator();
+    ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
+    ListIterator<Pile> pileStepIt = new LinkedList<Pile>().listIterator();
 
 
     public static ListIterator<Card> getCardStepIt() {
@@ -21,7 +21,15 @@ public class Steps {
     public static void undo () {
 
         if (cardStepIt.hasNext()) {
+            if (pileStepIt.next().getTopCard()!=null) {
+                pileStepIt.previous();
+                pileStepIt.next().getTopCard().flip();
+            }
+            pileStepIt.previous();
             cardStepIt.next().moveToPile(pileStepIt.next());
+
+
+            //pileStepIt.previous();
         }
 
     }
