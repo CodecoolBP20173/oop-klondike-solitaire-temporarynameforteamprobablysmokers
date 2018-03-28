@@ -3,6 +3,7 @@ package com.codecool.klondike;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -120,6 +121,7 @@ public class Game extends Pane {
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
+
             if (pile.getPileType() == Pile.PileType.FOUNDATION && draggedCards.size() > 1 ) {
                 draggedCards.forEach(MouseUtil::slideBack);
                 draggedCards.clear();
@@ -129,6 +131,9 @@ public class Game extends Pane {
                 Steps.getPileStepIt().add(source);
                 Steps.getPileStepIt().previous();
                 handleValidMove(card, pile);
+              if (isGameWon()) {
+                gameWon();
+            }
             }
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
@@ -138,7 +143,14 @@ public class Game extends Pane {
 
     public boolean isGameWon() {
         //TODO
-        return false;
+        boolean answer = true;
+        for (Pile pile: foundationPiles) {
+            if (pile.getCards().size()!=13) {
+                answer=false;
+                break;
+            }
+        }
+        return answer;
     }
 
     public Game() {
@@ -147,6 +159,26 @@ public class Game extends Pane {
         initPiles();
         dealCards();
         initButtons();
+    }
+
+    public void gameWon() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("You Won!");
+        alert.setContentText("Exit or Restart?");
+        ButtonType exit = new ButtonType("Exit");
+        ButtonType restart = new ButtonType("Restart");
+
+
+        alert.getButtonTypes().setAll(exit, restart);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == exit){
+            System.exit(0);
+        }  else {
+            reset();
+        }
+
+
     }
 
 
