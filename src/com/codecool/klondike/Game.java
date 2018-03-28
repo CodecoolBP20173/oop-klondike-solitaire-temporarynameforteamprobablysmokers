@@ -32,32 +32,34 @@ public class Game extends Pane {
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
-        int clickCount = e.getClickCount();
-        Pile sourcePile=((Card) e.getSource()).getContainingPile();
-        if (clickCount == 2 && (sourcePile.getPileType() == Pile.PileType.TABLEAU) || sourcePile.getPileType() == Pile.PileType.DISCARD) {
-            List<Pile> union = new ArrayList<>();
-            union.addAll( tableauPiles );
-            union.addAll( foundationPiles );
-            Pile pile = getValidIntersectingPile(card, union, clickCount);
-            if (pile != null) {
-                card.moveToPile(pile);
-                Steps.getCardStepIt().add(currentCard);
-                Steps.getCardStepIt().previous();
-                Steps.getPileStepIt().add(sourcePile);
-                Steps.getPileStepIt().previous();
-                handleValidMove(card, pile);
-                if (!(sourcePile.getPileType() == Pile.PileType.DISCARD) && (!sourcePile.isEmpty()) && sourcePile.getTopCard().isFaceDown()) {
-                    sourcePile.getTopCard().flip();
-                }
-            } else {
-            }
-        }
+        if ((!(card.isFaceDown()) && (card.getContainingPile().getTopCard() == card)) || card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
+            int clickCount = e.getClickCount();
+            Pile sourcePile=((Card) e.getSource()).getContainingPile();
+            if (clickCount == 2 && (sourcePile.getPileType() == Pile.PileType.TABLEAU) || sourcePile.getPileType() == Pile.PileType.DISCARD) {
+                List<Pile> union = new ArrayList<>();
+                union.addAll( tableauPiles );
+                union.addAll( foundationPiles );
+                Pile pile = getValidIntersectingPile(card, union, clickCount);
+                if (pile != null) {
+                    card.moveToPile(pile);
+                    Steps.getCardStepIt().add(currentCard);
+                    Steps.getCardStepIt().previous();
+                    Steps.getPileStepIt().add(sourcePile);
+                    Steps.getPileStepIt().previous();
+                    handleValidMove(card, pile);
+                    if (!(sourcePile.getPileType() == Pile.PileType.DISCARD) && (!sourcePile.isEmpty()) && sourcePile.getTopCard().isFaceDown()) {
+                        sourcePile.getTopCard().flip();
+                    }
+                } else {
 
-        if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
-            card.moveToPile(discardPile);
-            card.flip();
-            card.setMouseTransparent(false);
-            System.out.println("Placed " + card + " to the waste.");
+                }
+            }
+            if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
+                card.moveToPile(discardPile);
+                card.flip();
+                card.setMouseTransparent(false);
+                System.out.println("Placed " + card + " to the waste.");
+            }
         }
     };
 
@@ -66,31 +68,35 @@ public class Game extends Pane {
     };
 
     private EventHandler<MouseEvent> onMousePressedHandler = e -> {
-        dragStartX = e.getSceneX();
-        dragStartY = e.getSceneY();
+        Card card = (Card) e.getSource();
+        if (!(card.isFaceDown())) {
+            dragStartX = e.getSceneX();
+            dragStartY = e.getSceneY();
+        }
     };
 
     private EventHandler<MouseEvent> onMouseDraggedHandler = e -> {
         Card card = (Card) e.getSource();
-        source = card.getContainingPile();
-        currentCard= card;
+        if (!(card.isFaceDown())) {
+            source = card.getContainingPile();
+            currentCard = card;
+            Pile activePile = card.getContainingPile();
+            if (activePile.getPileType() == Pile.PileType.STOCK)
+                return;
+            double offsetX = e.getSceneX() - dragStartX;
+            double offsetY = e.getSceneY() - dragStartY;
 
-        Pile activePile = card.getContainingPile();
-        if (activePile.getPileType() == Pile.PileType.STOCK)
-            return;
-        double offsetX = e.getSceneX() - dragStartX;
-        double offsetY = e.getSceneY() - dragStartY;
+            draggedCards.clear();
+            draggedCards.add(card);
 
-        draggedCards.clear();
-        draggedCards.add(card);
+            card.getDropShadow().setRadius(20);
+            card.getDropShadow().setOffsetX(10);
+            card.getDropShadow().setOffsetY(10);
 
-        card.getDropShadow().setRadius(20);
-        card.getDropShadow().setOffsetX(10);
-        card.getDropShadow().setOffsetY(10);
-
-        card.toFront();
-        card.setTranslateX(offsetX);
-        card.setTranslateY(offsetY);
+            card.toFront();
+            card.setTranslateX(offsetX);
+            card.setTranslateY(offsetY);
+        }
     };
 
     private EventHandler<MouseEvent> onMouseReleasedHandler = e -> {
@@ -105,14 +111,19 @@ public class Game extends Pane {
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
-            card.moveToPile(pile);
-            Steps.getCardStepIt().add(currentCard);
-            Steps.getCardStepIt().previous();
-            Steps.getPileStepIt().add(source);
-            Steps.getPileStepIt().previous();
-            handleValidMove(card, pile);
-            if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
-                fromPile.getTopCard().flip();
+            if (pile.getPileType() != Pile.PileType.FOUNDATION && draggedCards.size() > 1 ) {
+                draggedCards.forEach(MouseUtil::slideBack);
+                draggedCards.clear();
+            } else {
+                card.moveToPile(pile);
+                Steps.getCardStepIt().add(currentCard);
+                Steps.getCardStepIt().previous();
+                Steps.getPileStepIt().add(source);
+                Steps.getPileStepIt().previous();
+                handleValidMove(card, pile);
+                if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
+                    fromPile.getTopCard().flip();
+                }
             }
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
