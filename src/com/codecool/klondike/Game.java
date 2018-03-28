@@ -1,6 +1,7 @@
 package com.codecool.klondike;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -42,10 +43,12 @@ public class Game extends Pane {
                 union.addAll( foundationPiles );
                 Pile pile = getValidIntersectingPile(card, union, clickCount);
                 if (pile != null) {
-                    card.moveToPile(pile);
-                    Steps.getCardStepIt().add(currentCard);
+                    Steps.numOfSteps.add(1);
+                    Steps.numOfSteps.previous();
+
+                    Steps.getCardStepIt().add(card);
                     Steps.getCardStepIt().previous();
-                    Steps.getPileStepIt().add(sourcePile);
+                    Steps.getPileStepIt().add(card.getContainingPile());
                     Steps.getPileStepIt().previous();
                     handleValidMove(card, pile);
                     if (!(sourcePile.getPileType() == Pile.PileType.DISCARD) && (!sourcePile.isEmpty()) && sourcePile.getTopCard().isFaceDown()) {
@@ -104,7 +107,7 @@ public class Game extends Pane {
                     pileCard.setTranslateY(offsetY);
                     offSetCounter++;
             }
-          }    
+          }
         }
     };
 
@@ -126,9 +129,19 @@ public class Game extends Pane {
                 draggedCards.forEach(MouseUtil::slideBack);
                 draggedCards.clear();
             } else {
-                Steps.getCardStepIt().add(currentCard);
-                Steps.getCardStepIt().previous();
-                Steps.getPileStepIt().add(source);
+                Steps.numOfSteps.add(draggedCards.size());
+                Steps.numOfSteps.previous();
+                for (int i=0; i<draggedCards.size(); i++) {
+                    Steps.getCardStepIt().add(draggedCards.get(i));
+                    
+                }
+
+                for (int i=0; i<draggedCards.size(); i++) {
+
+                    Steps.getCardStepIt().previous();
+                }
+
+                Steps.getPileStepIt().add(card.getContainingPile());
                 Steps.getPileStepIt().previous();
                 handleValidMove(card, pile);
               if (isGameWon()) {

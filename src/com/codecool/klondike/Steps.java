@@ -1,14 +1,13 @@
 package com.codecool.klondike;
 
-import org.omg.CORBA.Object;
-
 import java.util.*;
 
-public class Steps {
+public interface Steps {
 
-    private static ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
-    private static ListIterator<Pile> pileStepIt = new LinkedList<Pile>().listIterator();
-
+    //ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
+    ListIterator<Pile> pileStepIt = new LinkedList<Pile>().listIterator();
+    ListIterator<Card> cardStepIt = new LinkedList<Card>().listIterator();
+    ListIterator<Integer> numOfSteps = new LinkedList<Integer>().listIterator();
 
     public static ListIterator<Card> getCardStepIt() {
         return cardStepIt;
@@ -21,7 +20,18 @@ public class Steps {
     public static void undo () {
 
         if (cardStepIt.hasNext()) {
-            cardStepIt.next().moveToPile(pileStepIt.next());
+            if (pileStepIt.next().getTopCard()!=null) {
+                pileStepIt.previous();
+                pileStepIt.next().getTopCard().flip();
+            }
+            pileStepIt.previous();
+            //System.out.println("alma");
+            //System.out.println(numOfSteps.next());
+            Integer next = numOfSteps.next();
+            Pile sourceP = pileStepIt.next();
+            for (Integer i = 0; i<next; i++)
+                cardStepIt.next().moveToPile(sourceP);
+                //pileStepIt.previous();
         }
 
     }
