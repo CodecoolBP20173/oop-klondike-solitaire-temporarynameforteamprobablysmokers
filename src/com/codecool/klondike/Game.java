@@ -5,6 +5,7 @@ import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -91,11 +92,16 @@ public class Game extends Pane {
         //TODO Complete
         if (pile != null) {
             card.moveToPile(pile);
+            //handles undo
             Steps.getCardStepIt().add(currentCard);
             Steps.getCardStepIt().previous();
             Steps.getPileStepIt().add(source);
             Steps.getPileStepIt().previous();
+
             handleValidMove(card, pile);
+            if (isGameWon()) {
+                gameWon();
+            }
             if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
                 fromPile.getTopCard().flip();
             }
@@ -107,7 +113,14 @@ public class Game extends Pane {
 
     public boolean isGameWon() {
         //TODO
-        return false;
+        boolean answer = true;
+        for (Pile pile: foundationPiles) {
+            if (pile.getCards().size()!=13) {
+                answer=false;
+                break;
+            }
+        }
+        return answer;
     }
 
     public Game() {
@@ -116,6 +129,29 @@ public class Game extends Pane {
         initPiles();
         dealCards();
         initButtons();
+    }
+
+    public void gameWon() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("You Won!");
+        alert.setContentText("Exit or Restart?");
+
+        alert.showAndWait();
+
+        ButtonType exit = new ButtonType("Exit");
+        ButtonType restart = new ButtonType("Restart");
+
+
+        alert.getButtonTypes().setAll(exit, restart);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == exit){
+            System.exit(0);
+        }  else {
+            reset();
+        }
+
+
     }
 
 
