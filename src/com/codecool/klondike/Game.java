@@ -1,15 +1,14 @@
 package com.codecool.klondike;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Game extends Pane {
 
@@ -28,23 +27,28 @@ public class Game extends Pane {
     private static double TABLEAU_GAP = 30;
 
     private Pile source;
-    private Card currentCard;
+    private Card currentCards;
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
         int clickCount = e.getClickCount();
         Pile sourcePile=((Card) e.getSource()).getContainingPile();
+
         if (clickCount == 2 && (sourcePile.getPileType() == Pile.PileType.TABLEAU) || sourcePile.getPileType() == Pile.PileType.DISCARD) {
             List<Pile> union = new ArrayList<>();
             union.addAll( tableauPiles );
             union.addAll( foundationPiles );
             Pile pile = getValidIntersectingPile(card, union, clickCount);
             if (pile != null) {
-                card.moveToPile(pile);
-                Steps.getCardStepIt().add(currentCard);
+                Steps.numOfSteps.add(1);
+                Steps.numOfSteps.previous();
+                //source=sourcePile;
+
+                Steps.getCardStepIt().add(card);
                 Steps.getCardStepIt().previous();
-                Steps.getPileStepIt().add(sourcePile);
+                Steps.getPileStepIt().add(card.getContainingPile());
                 Steps.getPileStepIt().previous();
+                card.moveToPile(pile);
                 handleValidMove(card, pile);
                 if (!(sourcePile.getPileType() == Pile.PileType.DISCARD) && (!sourcePile.isEmpty()) && sourcePile.getTopCard().isFaceDown()) {
                     sourcePile.getTopCard().flip();
@@ -73,7 +77,8 @@ public class Game extends Pane {
     private EventHandler<MouseEvent> onMouseDraggedHandler = e -> {
         Card card = (Card) e.getSource();
         source = card.getContainingPile();
-        currentCard= card;
+
+
 
         Pile activePile = card.getContainingPile();
         if (activePile.getPileType() == Pile.PileType.STOCK)
@@ -84,6 +89,7 @@ public class Game extends Pane {
         draggedCards.clear();
         draggedCards.add(card);
 
+        //currentCards = draggedCards;
         card.getDropShadow().setRadius(20);
         card.getDropShadow().setOffsetX(10);
         card.getDropShadow().setOffsetY(10);
@@ -105,11 +111,18 @@ public class Game extends Pane {
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
-            card.moveToPile(pile);
-            Steps.getCardStepIt().add(currentCard);
+            System.out.println(draggedCards.size());
+            Steps.numOfSteps.add(draggedCards.size());
+            Steps.numOfSteps.previous();
+            for (Card draggedcard: draggedCards) {
+                Steps.getCardStepIt().add(draggedcard);
+            }
+            Steps.getCardStepIt().add(card);
             Steps.getCardStepIt().previous();
-            Steps.getPileStepIt().add(source);
+            Steps.getPileStepIt().add(card.getContainingPile());
             Steps.getPileStepIt().previous();
+            card.moveToPile(pile);
+
             handleValidMove(card, pile);
             if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
                 fromPile.getTopCard().flip();

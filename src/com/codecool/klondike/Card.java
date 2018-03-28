@@ -112,9 +112,9 @@ public class Card extends ImageView {
         for (cardSuits suit: cardSuits.values()) {
             for (cardRanks rank: cardRanks.values()) {
                 String cardName = suit.toString() + Integer.toString(rank.ordinal()+1);
-                System.out.println(cardName.toLowerCase());
+                //System.out.println(cardName.toLowerCase());
                 String cardId = "S" + Integer.toString(suit.ordinal()+1) + "R" + Integer.toString(rank.ordinal()+1);
-                System.out.println(cardId);
+                //System.out.println(cardId);
                 String imageFileName = "card_images/" + cardName.toLowerCase() + ".png";
                 cardFaceImages.put(cardId, new Image(imageFileName));
 
