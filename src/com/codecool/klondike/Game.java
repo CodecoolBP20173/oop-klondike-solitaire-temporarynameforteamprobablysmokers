@@ -142,7 +142,7 @@ public class Game extends Pane {
         } else if (destPile.getPileType() == Pile.PileType.FOUNDATION && destPile.isEmpty()) {
             return card.getRank().ordinal() + 1 == 1;
         } else if (destPile.getPileType() == Pile.PileType.FOUNDATION && (!destPile.isEmpty())) {
-            return (card.getRank().ordinal() == destPile.getTopCard().getRank().ordinal() + 1) && (card.getSuit() == destPile.getTopCard().getSuit());
+            return (card.getRank().ordinal() == destPile.getTopCard().getRank().ordinal() + 1) && (Card.isSameSuit(card, destPile.getTopCard()));
         } else {
             return false;
         }
