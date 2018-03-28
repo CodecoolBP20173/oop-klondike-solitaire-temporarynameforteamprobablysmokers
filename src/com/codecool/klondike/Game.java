@@ -76,40 +76,41 @@ public class Game extends Pane {
     };
 
     private EventHandler<MouseEvent> onMouseDraggedHandler = e -> {
-      if (!(card.isFaceDown())) {
         Card card = (Card) e.getSource();
-        source = card.getContainingPile();
-        currentCard= card;
+      if (!(card.isFaceDown())) {
+            source = card.getContainingPile();
+            currentCard= card;
 
-        Pile activePile = card.getContainingPile();
-        if (activePile.getPileType() == Pile.PileType.STOCK)
-            return;
+            Pile activePile = card.getContainingPile();
+            if (activePile.getPileType() == Pile.PileType.STOCK)
+                return;
 
-        double offsetX = e.getSceneX() - dragStartX;
-        System.out.println(offsetX);
-        double offsetY = e.getSceneY() - dragStartY;
-        draggedCards.clear();
-        int offSetCounter = 1;
-        for (Card pileCard: source.getCards()) {
-            if (source.getCards().indexOf(pileCard) >= source.getCards().indexOf(currentCard)) {
-                draggedCards.add(pileCard);
+            double offsetX = e.getSceneX() - dragStartX;
+            System.out.println(offsetX);
+            double offsetY = e.getSceneY() - dragStartY;
+            draggedCards.clear();
+            int offSetCounter = 1;
+            for (Card pileCard: source.getCards()) {
+                if (source.getCards().indexOf(pileCard) >= source.getCards().indexOf(currentCard)) {
+                    draggedCards.add(pileCard);
 
-                pileCard.toFront();
-                pileCard.getDropShadow().setRadius(20);
-                pileCard.getDropShadow().setOffsetX(10);
-                pileCard.getDropShadow().setOffsetY(10);
+                    pileCard.toFront();
+                    pileCard.getDropShadow().setRadius(20);
+                    pileCard.getDropShadow().setOffsetX(10);
+                    pileCard.getDropShadow().setOffsetY(10);
 
-                pileCard.setTranslateX(offsetX);
-                pileCard.setTranslateY(offsetY);
-                offSetCounter++;
+                    pileCard.setTranslateX(offsetX);
+                    pileCard.setTranslateY(offsetY);
+                    offSetCounter++;
             }
           }    
         }
     };
 
     private EventHandler<MouseEvent> onMouseReleasedHandler = e -> {
-        if (draggedCards.isEmpty())
+        if (draggedCards.isEmpty()) {
             return;
+        }
         int clickCount = e.getClickCount();
         Card card = (Card) e.getSource();
         List<Pile> union = new ArrayList<>();
@@ -119,17 +120,15 @@ public class Game extends Pane {
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
-            if (pile.getPileType() != Pile.PileType.FOUNDATION && draggedCards.size() > 1 ) {
+            if (pile.getPileType() == Pile.PileType.FOUNDATION && draggedCards.size() > 1 ) {
                 draggedCards.forEach(MouseUtil::slideBack);
                 draggedCards.clear();
             } else {
-                card.moveToPile(pile);
                 Steps.getCardStepIt().add(currentCard);
                 Steps.getCardStepIt().previous();
                 Steps.getPileStepIt().add(source);
                 Steps.getPileStepIt().previous();
                 handleValidMove(card, pile);
-                
             }
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
@@ -192,12 +191,13 @@ public class Game extends Pane {
                         isMoveValid(card, pile))
                     result = pile;
             }
-        }
-        for (Pile pile : piles) {
-            if (!pile.equals(card.getContainingPile()) &&
-                    isOverPile(card, pile) &&
-                    isMoveValid(card, pile))
-                result = pile;
+        } else {
+            for (Pile pile : piles) {
+                if (!pile.equals(card.getContainingPile()) &&
+                        isOverPile(card, pile) &&
+                        isMoveValid(card, pile))
+                    result = pile;
+            }
         }
         return result;
     }
