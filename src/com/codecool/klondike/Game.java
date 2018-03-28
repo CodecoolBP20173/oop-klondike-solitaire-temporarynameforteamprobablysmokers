@@ -32,7 +32,7 @@ public class Game extends Pane {
 
     private EventHandler<MouseEvent> onMouseClickedHandler = e -> {
         Card card = (Card) e.getSource();
-        if (!(card.isFaceDown()) || card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
+        if ((!(card.isFaceDown()) && (card.getContainingPile().getTopCard() == card)) || card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
             int clickCount = e.getClickCount();
             Pile sourcePile=((Card) e.getSource()).getContainingPile();
             if (clickCount == 2 && (sourcePile.getPileType() == Pile.PileType.TABLEAU) || sourcePile.getPileType() == Pile.PileType.DISCARD) {
@@ -111,14 +111,19 @@ public class Game extends Pane {
         Pile fromPile = card.getContainingPile();
         //TODO Complete
         if (pile != null) {
-            card.moveToPile(pile);
-            Steps.getCardStepIt().add(currentCard);
-            Steps.getCardStepIt().previous();
-            Steps.getPileStepIt().add(source);
-            Steps.getPileStepIt().previous();
-            handleValidMove(card, pile);
-            if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
-                fromPile.getTopCard().flip();
+            if (pile.getPileType() != Pile.PileType.FOUNDATION && draggedCards.size() > 1 ) {
+                draggedCards.forEach(MouseUtil::slideBack);
+                draggedCards.clear();
+            } else {
+                card.moveToPile(pile);
+                Steps.getCardStepIt().add(currentCard);
+                Steps.getCardStepIt().previous();
+                Steps.getPileStepIt().add(source);
+                Steps.getPileStepIt().previous();
+                handleValidMove(card, pile);
+                if (!(fromPile.getPileType() == Pile.PileType.DISCARD) && (!fromPile.isEmpty()) && fromPile.getTopCard().isFaceDown()) {
+                    fromPile.getTopCard().flip();
+                }
             }
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
