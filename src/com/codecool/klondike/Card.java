@@ -5,15 +5,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
-
-import java.util.List;
-
 import java.util.*;
 
 public class Card extends ImageView {
 
-    private int suit;
-    private int rank;
+    private cardSuits suit;
+    private cardRanks rank;
+    private cardColor color;
     private boolean faceDown;
 
     private Image backFace;
@@ -26,9 +24,14 @@ public class Card extends ImageView {
     public static final int WIDTH = 150;
     public static final int HEIGHT = 215;
 
-    public Card(int suit, int rank, boolean faceDown) {
+    public Card(cardSuits suit, cardRanks rank, boolean faceDown) {
         this.suit = suit;
         this.rank = rank;
+        if (suit == cardSuits.HEARTS || suit == cardSuits.DIAMONDS) {
+            this.color = cardColor.RED;
+        } else {
+            this.color = cardColor.BLACK;
+        }
         this.faceDown = faceDown;
         this.dropShadow = new DropShadow(2, Color.gray(0, 0.75));
         backFace = cardBackImage;
@@ -37,12 +40,16 @@ public class Card extends ImageView {
         setEffect(dropShadow);
     }
 
-    public int getSuit() {
+    public cardSuits getSuit() {
         return suit;
     }
 
-    public int getRank() {
+    public cardRanks getRank() {
         return rank;
+    }
+
+    public cardColor getColor() {
+        return color;
     }
 
     public boolean isFaceDown() {
@@ -50,7 +57,7 @@ public class Card extends ImageView {
     }
 
     public String getShortName() {
-        return "S" + suit + "R" + rank;
+        return "S" + Integer.toString(suit.ordinal()+1) + "R" + Integer.toString(rank.ordinal() + 1);
     }
 
     public DropShadow getDropShadow() {
@@ -77,18 +84,11 @@ public class Card extends ImageView {
 
     @Override
     public String toString() {
-        return "The " + "Rank" + rank + " of " + "Suit" + suit;
+        return "The " + "Rank" + rank + 1 + " of " + "Suit" + suit.ordinal();
     }
 
     public static boolean isOppositeColor(Card card1, Card card2) {
-        ArrayList<Integer> red = new ArrayList<>(2);
-        ArrayList<Integer> black = new ArrayList<>(2);
-        red.add(1);
-        red.add(2);
-        black.add(3);
-        black.add(4);
-        return red.contains(card1.getSuit()) && black.contains(card2.getSuit()) || black.contains(card1.getSuit())
-                && red.contains(card2.getSuit());
+        return card1.color != card2.color;
     }
 
     public static boolean isSameSuit(Card card1, Card card2) {
@@ -97,41 +97,57 @@ public class Card extends ImageView {
 
     public static List<Card> createNewDeck() {
         List<Card> result = new ArrayList<>();
-        for (int suit = 1; suit < 5; suit++) {
-            for (int rank = 1; rank < 14; rank++) {
+        for (cardSuits suit: cardSuits.values()) {
+            for (cardRanks rank: cardRanks.values()) {
                 result.add(new Card(suit, rank, true));
             }
         }
-        System.out.println();
+        System.out.println(result.size());
         Collections.shuffle(result);
         return result;
     }
 
     public static void loadCardImages() {
         cardBackImage = new Image("card_images/card_back.png");
-        String suitName = "";
-        for (int suit = 1; suit < 5; suit++) {
-            switch (suit) {
-                case 1:
-                    suitName = "hearts";
-                    break;
-                case 2:
-                    suitName = "diamonds";
-                    break;
-                case 3:
-                    suitName = "spades";
-                    break;
-                case 4:
-                    suitName = "clubs";
-                    break;
-            }
-            for (int rank = 1; rank < 14; rank++) {
-                String cardName = suitName + rank;
-                String cardId = "S" + suit + "R" + rank;
-                String imageFileName = "card_images/" + cardName + ".png";
+        for (cardSuits suit: cardSuits.values()) {
+            for (cardRanks rank: cardRanks.values()) {
+                String cardName = suit.toString() + Integer.toString(rank.ordinal()+1);
+                System.out.println(cardName.toLowerCase());
+                String cardId = "S" + Integer.toString(suit.ordinal()+1) + "R" + Integer.toString(rank.ordinal()+1);
+                System.out.println(cardId);
+                String imageFileName = "card_images/" + cardName.toLowerCase() + ".png";
                 cardFaceImages.put(cardId, new Image(imageFileName));
+
             }
         }
+    }
+
+    public enum cardSuits{
+        HEARTS,
+        DIAMONDS,
+        SPADES,
+        CLUBS
+    }
+
+    public enum cardRanks{
+        ACE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE,
+        SIX,
+        SEVEN,
+        EIGHT,
+        NINE,
+        TEN,
+        JOHNNY,
+        QUEEN,
+        KING
+    }
+
+    public enum cardColor{
+        BLACK,
+        RED
     }
 
 }
