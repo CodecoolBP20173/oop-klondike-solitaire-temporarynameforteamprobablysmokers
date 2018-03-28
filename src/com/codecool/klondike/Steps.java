@@ -28,8 +28,10 @@ public interface Steps {
             //System.out.println("alma");
             //System.out.println(numOfSteps.next());
             Integer next = numOfSteps.next();
+            Pile sourceP = pileStepIt.next();
             for (Integer i = 0; i<next; i++)
-                cardStepIt.next().moveToPile(pileStepIt.next());
+                cardStepIt.next().moveToPile(sourceP);
+                //pileStepIt.previous();
         }
 
     }

@@ -129,9 +129,17 @@ public class Game extends Pane {
             } else {
                 Steps.numOfSteps.add(draggedCards.size());
                 Steps.numOfSteps.previous();
-                Steps.getCardStepIt().add(currentCard);
-                Steps.getCardStepIt().previous();
-                Steps.getPileStepIt().add(source);
+                for (int i=0; i<draggedCards.size(); i++) {
+                    Steps.getCardStepIt().add(draggedCards.get(i));
+                    
+                }
+
+                for (int i=0; i<draggedCards.size(); i++) {
+
+                    Steps.getCardStepIt().previous();
+                }
+
+                Steps.getPileStepIt().add(card.getContainingPile());
                 Steps.getPileStepIt().previous();
                 handleValidMove(card, pile);
             }
