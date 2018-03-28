@@ -10,7 +10,7 @@ import java.util.*;
 public class Card extends ImageView {
 
     private cardSuits suit;
-    private cardRanks rank;
+    private int rank;
     private boolean faceDown;
 
     private Image backFace;
@@ -23,7 +23,7 @@ public class Card extends ImageView {
     public static final int WIDTH = 150;
     public static final int HEIGHT = 215;
 
-    public Card(cardSuits suit, cardRanks rank, boolean faceDown) {
+    public Card(cardSuits suit, int rank, boolean faceDown) {
         this.suit = suit;
         this.rank = rank;
         this.faceDown = faceDown;
@@ -36,7 +36,7 @@ public class Card extends ImageView {
 
     public cardSuits getSuit() { return suit; }
 
-    public cardRanks getRank() {
+    public int getRank() {
         return rank;
     }
 
@@ -45,7 +45,7 @@ public class Card extends ImageView {
     }
 
     public String getShortName() {
-        return "S" + suit + "R" + rank;
+        return "S" + Integer.toString(suit.ordinal()+1) + "R" + Integer.toString(rank + 1);
     }
 
     public DropShadow getDropShadow() {
@@ -72,7 +72,7 @@ public class Card extends ImageView {
 
     @Override
     public String toString() {
-        return "The " + "Rank" + rank + " of " + "Suit" + suit;
+        return "The " + "Rank" + rank + 1 + " of " + "Suit" + suit.ordinal();
     }
 
     public static boolean isOppositeColor(Card card1, Card card2) {
@@ -82,8 +82,8 @@ public class Card extends ImageView {
         red.add(2);
         black.add(3);
         black.add(4);
-        return red.contains(card1.getSuit()) && black.contains(card2.getSuit()) || black.contains(card1.getSuit())
-                && red.contains(card2.getSuit());
+        return red.contains(card1.getSuit().ordinal() + 1) && black.contains(card2.getSuit().ordinal() +1) || black.contains(card1.getSuit().ordinal() + 1)
+                && red.contains(card2.getSuit().ordinal() + 1);
     }
 
     public static boolean isSameSuit(Card card1, Card card2) {
@@ -94,10 +94,10 @@ public class Card extends ImageView {
         List<Card> result = new ArrayList<>();
         for (cardSuits suit: cardSuits.values()) {
             for (cardRanks rank: cardRanks.values()) {
-                result.add(new Card(suit, rank, true));
+                result.add(new Card(suit, rank.ordinal(), true));
             }
         }
-        System.out.println();
+        System.out.println(result.size());
         Collections.shuffle(result);
         return result;
     }
@@ -112,7 +112,8 @@ public class Card extends ImageView {
                 String cardId = "S" + Integer.toString(suit.ordinal()+1) + "R" + Integer.toString(rank.ordinal()+1);
                 System.out.println(cardId);
                 String imageFileName = "card_images/" + cardName.toLowerCase() + ".png";
-                cardFaceImages.put(cardId.toLowerCase(), new Image(imageFileName));
+                cardFaceImages.put(cardId, new Image(imageFileName));
+
             }
         }
     }

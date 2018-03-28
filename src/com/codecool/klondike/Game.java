@@ -136,13 +136,13 @@ public class Game extends Pane {
     public boolean isMoveValid(Card card, Pile destPile) {
         //TODO Complete
         if (destPile.getPileType() == Pile.PileType.TABLEAU && !(destPile.isEmpty())) {
-            return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank().ordinal() == destPile.getTopCard().getRank().ordinal() - 1;
+            return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank() == destPile.getTopCard().getRank() - 1;
         } else if (destPile.getPileType() == Pile.PileType.TABLEAU && destPile.isEmpty()) {
-            return card.getRank().ordinal() == 13;
+            return card.getRank() + 1 == 13;
         } else if (destPile.getPileType() == Pile.PileType.FOUNDATION && destPile.isEmpty()) {
-            return card.getRank().ordinal() == 1;
+            return card.getRank() + 1 == 1;
         } else if (destPile.getPileType() == Pile.PileType.FOUNDATION && (!destPile.isEmpty())) {
-            return (card.getRank().ordinal() == destPile.getTopCard().getRank().ordinal() + 1) && (card.getSuit() == destPile.getTopCard().getSuit());
+            return (card.getRank() + 1 == destPile.getTopCard().getRank() + 2) && (card.getSuit().ordinal() == destPile.getTopCard().getSuit().ordinal());
         } else {
             return false;
         }
