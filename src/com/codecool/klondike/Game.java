@@ -52,19 +52,11 @@ public class Game extends Pane {
                 union.addAll( foundationPiles );
                 Pile pile = getValidIntersectingPile(card, union, clickCount);
                 if (pile != null) {
-                    Steps.numOfSteps.add(1);
-                    Steps.numOfSteps.previous();
-
-                    Steps.getCardStepIt().add(card);
-                    Steps.getCardStepIt().previous();
-                    Steps.getPileStepIt().add(card.getContainingPile());
-                    Steps.getPileStepIt().previous();
+                    handleSingleStep(card);
                     handleValidMove(card, pile);
                     if (!(sourcePile.getPileType() == Pile.PileType.DISCARD) && (!sourcePile.isEmpty()) && sourcePile.getTopCard().isFaceDown()) {
                         sourcePile.getTopCard().flip();
                     }
-                } else {
-
                 }
             }
             if (card.getContainingPile().getPileType() == Pile.PileType.STOCK) {
@@ -75,6 +67,16 @@ public class Game extends Pane {
             }
         }
     };
+
+    private void handleSingleStep(Card card) {
+        Steps.numOfSteps.add(1);
+        Steps.numOfSteps.previous();
+
+        Steps.getCardStepIt().add(card);
+        Steps.getCardStepIt().previous();
+        Steps.getPileStepIt().add(card.getContainingPile());
+        Steps.getPileStepIt().previous();
+    }
 
     private EventHandler<MouseEvent> stockReverseCardsHandler = e -> {
         refillStockFromDiscard();
@@ -99,10 +101,8 @@ public class Game extends Pane {
                 return;
 
             double offsetX = e.getSceneX() - dragStartX;
-            System.out.println(offsetX);
             double offsetY = e.getSceneY() - dragStartY;
             draggedCards.clear();
-            int offSetCounter = 1;
             for (Card pileCard: source.getCards()) {
                 if (source.getCards().indexOf(pileCard) >= source.getCards().indexOf(currentCard)) {
                     draggedCards.add(pileCard);
@@ -114,7 +114,6 @@ public class Game extends Pane {
 
                     pileCard.setTranslateX(offsetX);
                     pileCard.setTranslateY(offsetY);
-                    offSetCounter++;
             }
           }
         }
@@ -130,32 +129,16 @@ public class Game extends Pane {
         union.addAll( tableauPiles );
         union.addAll( foundationPiles );
         Pile pile = getValidIntersectingPile(card, union, clickCount);
-        Pile fromPile = card.getContainingPile();
-        //TODO Complete
         if (pile != null) {
-
             if (pile.getPileType() == Pile.PileType.FOUNDATION && draggedCards.size() > 1 ) {
                 draggedCards.forEach(MouseUtil::slideBack);
                 draggedCards.clear();
             } else {
-                Steps.numOfSteps.add(draggedCards.size());
-                Steps.numOfSteps.previous();
-                for (int i=0; i<draggedCards.size(); i++) {
-                    Steps.getCardStepIt().add(draggedCards.get(i));
-                    
-                }
-
-                for (int i=0; i<draggedCards.size(); i++) {
-
-                    Steps.getCardStepIt().previous();
-                }
-
-                Steps.getPileStepIt().add(card.getContainingPile());
-                Steps.getPileStepIt().previous();
+                handleMultiSteps(card);
                 handleValidMove(card, pile);
-              if (isGameWon()) {
-                gameWon();
-            }
+                if (isGameWon()) {
+                    gameWon();
+                }
             }
         } else {
             draggedCards.forEach(MouseUtil::slideBack);
@@ -163,21 +146,32 @@ public class Game extends Pane {
         }
     };
 
+    private void handleMultiSteps(Card card) {
+        Steps.numOfSteps.add(draggedCards.size());
+        Steps.numOfSteps.previous();
+        for (int i=0; i<draggedCards.size(); i++) {
+            Steps.getCardStepIt().add(draggedCards.get(i));
+        }
+        for (int i=0; i<draggedCards.size(); i++) {
+            Steps.getCardStepIt().previous();
+        }
+        Steps.getPileStepIt().add(card.getContainingPile());
+        Steps.getPileStepIt().previous();
+    }
+
     public boolean isGameWon() {
-        //TODO
-        boolean answer = true;
         int size=0;
         for (Pile pile: foundationPiles) {
             size += pile.getCards().size();
         }
         if (size>=51) {
-        return true;} else {
+            return true;
+        } else {
             return false;
         }
     }
 
     public Game() {
-
         deck = Card.createNewDeck();
         initPiles();
         dealCards();
@@ -192,7 +186,6 @@ public class Game extends Pane {
         ButtonType exit = new ButtonType("Exit");
         ButtonType restart = new ButtonType("Restart");
 
-
         alert.getButtonTypes().setAll(exit, restart);
 
         Optional<ButtonType> result = alert.showAndWait();
@@ -204,8 +197,6 @@ public class Game extends Pane {
             initPiles();
             dealCards();
         }
-
-
     }
 
 
@@ -217,8 +208,7 @@ public class Game extends Pane {
     }
 
     public void refillStockFromDiscard() {
-        //TODO
-        int discardPileLength = discardPile.numOfCards();
+        int discardPileLength = discardPile.getCards().size();
         if (stockPile.isEmpty()) {
             for (int i = 0; i < discardPileLength; i++) {
                 discardPile.getTopCard().flip();
@@ -312,26 +302,20 @@ public class Game extends Pane {
             initPiles();
             dealCards();
         });
-
         getChildren().add(restart);
-
     }
 
     public void reset() {
         for (Pile pile: tableauPiles) {
-
             getChildren().removeAll(pile.getCards());
             pile.clear();
             getChildren().remove(pile);
-
-
         }
         tableauPiles.clear();
         for (Pile pile: foundationPiles) {
             getChildren().removeAll(pile.getCards());
             pile.clear();
             getChildren().remove(pile);
-
         }
         foundationPiles.clear();
         getChildren().removeAll(stockPile.getCards());
@@ -404,5 +388,4 @@ public class Game extends Pane {
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
     }
-
 }
