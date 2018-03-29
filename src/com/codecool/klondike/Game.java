@@ -10,6 +10,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -223,7 +229,6 @@ public class Game extends Pane {
     }
 
     public boolean isMoveValid(Card card, Pile destPile) {
-        //TODO Complete
         if (destPile.getPileType() == Pile.PileType.TABLEAU && !(destPile.isEmpty())) {
             return Card.isOppositeColor(card, destPile.getTopCard()) && card.getRank().ordinal() + 1 == destPile.getTopCard().getRank().ordinal();
         } else if (destPile.getPileType() == Pile.PileType.TABLEAU && destPile.isEmpty()) {
@@ -373,7 +378,6 @@ public class Game extends Pane {
 
     public void dealCards() {
         Iterator<Card> deckIterator = deck.iterator();
-        //TODO Complete
         int i = 0;
         while (i < 7) {
             for (int j=-1; j < i; j++) {
