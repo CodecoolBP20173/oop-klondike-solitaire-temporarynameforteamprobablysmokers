@@ -160,13 +160,14 @@ public class Game extends Pane {
     public boolean isGameWon() {
         //TODO
         boolean answer = true;
+        int size=0;
         for (Pile pile: foundationPiles) {
-            if (pile.getCards().size()!=13) {
-                answer=false;
-                break;
-            }
+            size += pile.getCards().size();
         }
-        return answer;
+        if (size>=51) {
+        return true;} else {
+            return false;
+        }
     }
 
     public Game() {
@@ -272,6 +273,9 @@ public class Game extends Pane {
             msg = String.format("Placed %s to %s from %s", card, destPile.getTopCard(), source);
         }
         System.out.println(msg);
+        if (draggedCards.size()==0) {
+            draggedCards.add(card);
+        }
         MouseUtil.slideToDest(draggedCards, destPile);
         draggedCards.clear();
     }
