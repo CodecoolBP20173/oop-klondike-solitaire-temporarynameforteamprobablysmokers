@@ -54,7 +54,15 @@ public class MouseUtil {
             animateCardMovement(currentCard, sourceX, sourceY, targetX,
                     targetY + ((destPile.isEmpty() ? i : i + 1) * destCardGap), Duration.millis(150),
                     e -> {
+                        Pile fromPile = currentCard.getContainingPile();
                         currentCard.moveToPile(destPile);
+
+                        if (!(fromPile.getPileType() == Pile.PileType.DISCARD) &&
+                                (!fromPile.isEmpty()) &&
+                                fromPile.getTopCard().isFaceDown()) {
+                            fromPile.getTopCard().flip();
+                        }
+
                         currentCard.getDropShadow().setRadius(2);
                         currentCard.getDropShadow().setOffsetX(0);
                         currentCard.getDropShadow().setOffsetY(0);
