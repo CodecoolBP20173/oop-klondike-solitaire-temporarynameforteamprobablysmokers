@@ -22,7 +22,9 @@ public interface Steps {
         if (cardStepIt.hasNext()) {
             if (pileStepIt.next().getTopCard()!=null) {
                 pileStepIt.previous();
-                pileStepIt.next().getTopCard().flip();
+                if (pileStepIt.next().getPileType()!=Pile.PileType.DISCARD) {
+                    pileStepIt.previous();
+                    pileStepIt.next().getTopCard().flip();}
             }
             pileStepIt.previous();
             //System.out.println("alma");
@@ -31,7 +33,7 @@ public interface Steps {
             Pile sourceP = pileStepIt.next();
             for (Integer i = 0; i<next; i++)
                 cardStepIt.next().moveToPile(sourceP);
-                //pileStepIt.previous();
+            //pileStepIt.previous();
         }
 
     }
